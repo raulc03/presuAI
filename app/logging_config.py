@@ -8,4 +8,5 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 logger = logging.getLogger("app")

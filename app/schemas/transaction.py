@@ -14,13 +14,15 @@ class Transaction(BaseModel):
 
 class TransactionReturn(Transaction):
     id: int
+    description: str
+    amount: Decimal
+    type: Literal["expense", "income"]
     user_id: int
     category_id: int | None = Field(default=None)
-    description: str
 
 
 class TransactionCreate(Transaction):
-    pass
+    category_id: int | None = Field(default=None)
 
 
 class TransactionUpdate(BaseModel):

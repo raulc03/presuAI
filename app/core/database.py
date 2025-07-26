@@ -7,7 +7,6 @@ engine = create_engine(
     connect_args={"check_same_thread": False}
     if "sqlite" in settings.database_url
     else {},
-    echo=settings.debug,
 )
 
 

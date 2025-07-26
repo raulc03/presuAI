@@ -13,10 +13,9 @@ class Transaction(SQLModel, table=True):
     txn_datetime: datetime
     type: TypeEnum | None = Field(default=None)
     description: str = Field(max_length=60)
-
     # Relationship
     user_id: int = Field(foreign_key="user.id")
-    user: User = Relationship(back_populates="transactions")
-
     category_id: int | None = Field(default=None, foreign_key="category.id")
+
+    user: User = Relationship(back_populates="transactions")
     category: Category | None = Relationship(back_populates="transactions")

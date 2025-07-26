@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 
 from app.dependencies import SessionDep
+from app.models.category import Category
 from app.models.user import User
+from app.models.usercategory import UserCategoryLink
 from app.schemas.user import UserCreate, UserReturn, UserUpdate
 from app.logging_config import logger
 
@@ -12,8 +14,17 @@ router = APIRouter()
 @router.post("/", response_model=UserReturn)
 def create_user(data: UserCreate, session: SessionDep):
     new_user = User(**data.model_dump())
+    links = []
+    categories = session.exec(select(Category)).all()
+    if len(categories) == 0:
+        logger.error("Categories not found.")
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Categories not found."
+        )
+    for category in categories:
+        links.append(UserCategoryLink(category=category, user=new_user))
     try:
-        session.add(new_user)
+        session.add_all(links)
         session.commit()
         session.refresh(new_user)
         return UserReturn(**new_user.model_dump())
@@ -66,5 +77,5 @@ def delete(id: int, session: SessionDep):
         logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error creating the user.",
+            detail="Error deleting the user.",
         )
