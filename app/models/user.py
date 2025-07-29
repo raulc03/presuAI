@@ -12,7 +12,6 @@ class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str
     password: str
-    balance: Decimal = Field(default=0, decimal_places=2)
 
     # Relationship One to Many Transaction
     transactions: list["Transaction"] = Relationship(back_populates="user")
